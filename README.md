@@ -23,10 +23,6 @@ UI (Streamlit) → API (FastAPI)
 API → Redis → Celery Worker → ML модель
 API → PostgreSQL (история запросов)
 
-Prometheus → собирает метрики с API
-Grafana → визуализирует метрики
-
-
 ## Функциональность
 
 - Асинхронный анализ текста
@@ -50,9 +46,8 @@ Grafana → визуализирует метрики
 
 1. Клонирование репозитория
 
-```bash
 git clone <ai_sentiment_platform>
-cd ai_sentiment_platform```
+cd ai_sentiment_platform
 
 2. Настройка переменных окружения
 
@@ -60,10 +55,11 @@ cd ai_sentiment_platform```
 
 3. Запуск
 
-```bash
-docker compose up --build -d```
+
+docker compose up --build -d
 
 ## Доступ к сервисам
+
 | Сервис             | URL                                                        |
 | ------------------ | ---------------------------------------------------------- |
 | UI (Streamlit)     | [http://localhost](http://localhost)                       |
@@ -74,26 +70,26 @@ docker compose up --build -d```
 
 ### Анализ текста
 
-```bash
+
 curl -X POST http://localhost/api/predict \
 -H "Content-Type: application/json" \
 -d '{"text":"I love this application"}'
 
 Ответ:
 
-```bash
+
 {
   "task_id": "..."
 }
 
 ### Получение результата
 
-```bash
+
 curl http://localhost/api/result/<task_id>
 
 ### История запросов
 
-```bash
+
 curl http://localhost/api/history 
 
 ### Валидация данных
@@ -106,7 +102,7 @@ curl http://localhost/api/history
 
 Пример ошибки:
 
-```bash
+
 {
   "error": "Validation error",
   "hint": "Only Latin letters are allowed"
