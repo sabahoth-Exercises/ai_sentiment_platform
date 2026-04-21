@@ -69,9 +69,6 @@ docker compose up --build -d```
 | UI (Streamlit)     | [http://localhost](http://localhost)                       |
 | API Docs (Swagger) | [http://localhost/api/docs](http://localhost/api/docs)     |
 | Health Check       | [http://localhost/api/health](http://localhost/api/health) |
-| Prometheus         | [http://localhost:9090](http://localhost:9090)             |
-| Grafana            | [http://localhost:3000](http://localhost:3000)             |
-
 
 ## Примеры API запросов
 
