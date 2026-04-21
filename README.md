@@ -181,10 +181,10 @@ Endpoint:
 - grafana
 
 ## Сети
-frontend_net: UI, API, Nginx
-backend_net: API, Redis, Workers, DB
+- frontend_net: UI, API, Nginx
+- backend_net: API, Redis, Workers, DB
 
 ## Volumes
-PostgreSQL data
-Redis data
-ML модель
+- PostgreSQL data
+- Redis data
+- ML модель
