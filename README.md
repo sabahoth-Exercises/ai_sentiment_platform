@@ -12,9 +12,6 @@
 - **Базу данных PostgreSQL** с ORM (SQLAlchemy) и миграциями Alembic
 - **Веб-интерфейс** на Streamlit
 - **Reverse Proxy** (Nginx)
-- **Мониторинг** через Prometheus + Grafana
-
----
 
 ## Архитектура
 
@@ -30,8 +27,6 @@ Prometheus → собирает метрики с API
 Grafana → визуализирует метрики
 
 
----
-
 ## Функциональность
 
 - Асинхронный анализ текста
@@ -44,21 +39,19 @@ Grafana → визуализирует метрики
 - Визуализация результатов
 - Мониторинг API
 
----
 
 ## Требования
 
 - Docker
 - Docker Compose
 
----
 
 ## Запуск проекта
 
 ### 1. Клонирование репозитория
 
 ```bash
-git clone <your-repo>
+git clone <ai_sentiment_platform>
 cd ai_sentiment_platform```
 
 ### 2. Настройка переменных окружения
@@ -145,26 +138,7 @@ alembic_version
 При запуске автоматически выполняется:
 
 alembic upgrade head
-## Мониторинг
-- Prometheus
 
-Собирает метрики с API:
-
--количество запросов
-- время ответа
-- ошибки
-
-Endpoint:
-
-/metrics
-
-- Grafana
-
-Отображает:
-
-- RPS (запросы в секунду)
-- среднее время ответа
-- общее количество запросов
 
 ## Docker архитектура
 
@@ -177,8 +151,7 @@ Endpoint:
 - postgres
 - nginx
 - ui
-- prometheus
-- grafana
+
 
 ## Сети
 - frontend_net: UI, API, Nginx
