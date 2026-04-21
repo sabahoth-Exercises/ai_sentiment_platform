@@ -8,4 +8,8 @@ redis
 scikit-learn
 numpy
 joblib
-scikit-learn
+alembic
+websockets
+plotly
+pandas
+streamlit

@@ -1,35 +1,57 @@
+import os
 import time
-import requests
+
 import pandas as pd
 import plotly.express as px
+import requests
 import streamlit as st
+import json
 
 # UI через REST API
-API = "http://api:8000"
+API = os.getenv("API_URL", "http://api:8000")
 
 st.set_page_config(page_title="AI Sentiment", layout="centered")
 
 st.title("Simple AI Sentiment Analysis From Text Platform")
-st.markdown("Analyze text sentiment asynchronously using ML")
+st.markdown("Analyze Latin-only text sentiment asynchronously using ML")
 
-text = st.text_area("Enter text", height=150)
+text = st.text_area(
+    "Enter text",
+    height=150,
+    help="Only Latin letters, numbers, spaces and basic punctuation are allowed. Text must contain at least one Latin letter, 5 letters.",
+)
 
 if st.button("Analyze"):
     if not text.strip():
         st.warning("Please enter some text.")
     else:
         try:
-            response = requests.post(f"{API}/predict", json={"text": text}, timeout=30)
+            response = requests.post(
+                f"{API}/predict",
+                data=json.dumps({"text": text}, ensure_ascii=False).encode("utf-8"),
+                headers={"Content-Type": "application/json; charset=utf-8"},
+                timeout=30,
+                )
+            if response.status_code == 422:
+                try:
+                    detail = response.json()
+                    hint = detail.get(
+                        "hint",
+                        "Validation failed. Only Latin text is allowed."
+                    )
+                    st.error(hint)
+                except Exception:
+                    st.error("Validation failed. Only Latin text is allowed.")
 
-            if response.status_code != 202:
-                st.error(f"API error: {response.text}")
+            elif response.status_code != 202:
+                try:
+                    st.error(f"API error: {response.json()}")
+                except Exception:
+                    st.error(f"API error: {response.text}")
+
             else:
                 task_id = response.json()["task_id"]
-                #st.info(f"Task created: {task_id}")
-                # Debug only
-                print(f"Task created: {task_id}")
 
-                # UX асинхронности
                 progress = st.progress(0)
                 result_box = st.empty()
 
@@ -38,12 +60,17 @@ if st.button("Analyze"):
                     result_json = result.json()
 
                     if result_json["status"] == "done":
-                        result_box.success(
-                            f"Result: {result_json['sentiment']}"
-                        )
+                        sentiment = result_json["sentiment"]
+                        icon = {
+                            "positive": "😊",
+                            "neutral": "😐",
+                            "negative": "😞",
+                        }.get(sentiment, "ℹ️")
+                        result_box.success(f"{icon} Result: {sentiment}")
                         break
+
                     elif result_json["status"] == "failed":
-                        result_box.error(f"Task failed: {result_json}")
+                        result_box.error("Task failed")
                         break
 
                     progress.progress(min((i + 1) * 2, 100))
@@ -51,8 +78,8 @@ if st.button("Analyze"):
                 else:
                     result_box.warning("Task is still running. Please try again in a moment.")
 
-        except Exception as e:
-            st.error(f"Error: {e}")
+        except requests.exceptions.RequestException as e:
+            st.error(f"Service temporarily unavailable: {e}")
 
 st.divider()
 
@@ -66,10 +93,10 @@ if st.button("Load Analytics"):
         st.dataframe(df)
 
         if not df.empty:
-            fig = px.pie(df, names="sentiment", title="Sentiment Distribution") # Визуальная репрезентация
+            fig = px.pie(df, names="sentiment", title="Sentiment Distribution")  # Визуальная репрезентация
             st.plotly_chart(fig, use_container_width=True)
         else:
             st.info("No predictions yet.")
 
-    except Exception as e:
-        st.error(f"Failed to load data: {e}")
+    except requests.exceptions.RequestException:
+        st.error("Service temporarily unavailable")
